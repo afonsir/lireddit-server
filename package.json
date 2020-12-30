@@ -1,0 +1,20 @@
+{
+  "name": "lireddit-server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "watch": "tsc -w",
+    "dev": "nodemon dist/index.js",
+    "start": "node dist/index.js",
+    "ts:dev": "nodemon --exec ts-node src/index.ts",
+    "ts:start": "ts-node src/index.ts"
+  },
+  "repository": "git@github.com:afonsir/lireddit-server.git",
+  "author": "afonsir17 <afonsir17@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^14.14.17",
+    "nodemon": "^2.0.6",
+    "typescript": "^4.1.3"
+  }
+}
