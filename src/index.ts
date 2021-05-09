@@ -1,8 +1,11 @@
 import 'reflect-metadata';
-import { MikroORM } from '@mikro-orm/core';
+
 import express from 'express';
+
+import { MikroORM } from '@mikro-orm/core';
 import { ApolloServer } from 'apollo-server-express';
 import { buildSchema } from 'type-graphql';
+
 import mikroConfig from './mikro-orm.config';
 import PostResolver from './resolvers/post';
 
