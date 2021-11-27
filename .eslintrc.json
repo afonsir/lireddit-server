@@ -27,7 +27,11 @@
       }
     ],
     "prettier/prettier": "error",
-    "class-methods-use-this":"off"
+    "class-methods-use-this":"off",
+    "max-classes-per-file": [
+      "error",
+      { "ignoreExpressions": true, "max": 2 }
+    ]
   },
   "settings": {
     "import/resolver": {
