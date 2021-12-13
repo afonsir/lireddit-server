@@ -4,13 +4,34 @@ services:
 
   postgres:
     image: postgres:13-alpine
-    environment:
-      - POSTGRES_USER=lireddit
-      - POSTGRES_PASSWORD=liredditpwd
-    volumes:
-      - pg-data:/var/lib/postgresql/data
+    container_name: postgresdb
     ports:
       - 5432:5432
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+    healthcheck:
+      test: [ "CMD", "pg_isready", "--quiet", "--dbname", "${DB_NAME}", "--username", "${DB_USER}" ]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+
+  redis:
+    image: redis:6-alpine
+    container_name: redis
+    ports:
+      - 6379:6379
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 10s
+      retries: 5
 
 volumes:
   pg-data:
+  redis-data:
