@@ -1,35 +1,35 @@
-import argon2 from 'argon2'
+import argon2 from 'argon2';
 
-import { Arg, Ctx, Field, InputType, Mutation, ObjectType, Resolver } from 'type-graphql'
+import { Arg, Ctx, Field, InputType, Mutation, ObjectType, Resolver } from 'type-graphql';
 
-import { MyContext } from '../types'
-import User from '../entities/User'
+import { MyContext } from '../types';
+import User from '../entities/User';
 
 @InputType()
 class UsernamePasswordInput {
   @Field()
-  username: string
+  username: string;
 
   @Field()
-  password: string
+  password: string;
 }
 
 @ObjectType()
 class FieldError {
   @Field()
-  field: string
+  field: string;
 
   @Field()
-  message: string
+  message: string;
 }
 
 @ObjectType()
 class UserResponse {
   @Field(() => [FieldError], { nullable: true })
-  errors?: FieldError[]
+  errors?: FieldError[];
 
   @Field(() => User, { nullable: true })
-  user?: User
+  user?: User;
 }
 
 @Resolver()
@@ -47,7 +47,7 @@ export default class UserResolver {
             message: 'length must be greater than 2'
           }
         ]
-      }
+      };
     }
 
     if (input.password.length <= 3) {
@@ -58,17 +58,17 @@ export default class UserResolver {
             message: 'length must be greater than 3'
           }
         ]
-      }
+      };
     }
 
-    const hashedPassword = await argon2.hash(input.password)
+    const hashedPassword = await argon2.hash(input.password);
     const user = em.create(User, {
       username: input.username,
       password: hashedPassword
-    })
+    });
 
     try {
-      await em.persistAndFlush(user)
+      await em.persistAndFlush(user);
     } catch (err) {
       if (err.code === '23505') {
         return {
@@ -78,11 +78,11 @@ export default class UserResolver {
               message: 'username already taken'
             }
           ]
-        }
+        };
       }
     }
 
-    return { user }
+    return { user };
   }
 
   @Mutation(() => UserResponse)
@@ -90,7 +90,7 @@ export default class UserResolver {
     @Arg('input') input: UsernamePasswordInput,
     @Ctx() { em }: MyContext,
   ): Promise<UserResponse> {
-    const user = await em.findOne(User, { username: input.username })
+    const user = await em.findOne(User, { username: input.username });
 
     if (!user) {
       return {
@@ -100,10 +100,10 @@ export default class UserResolver {
             message: "that username doesn't exist"
           }
         ]
-      }
+      };
     }
 
-    const valid = await argon2.verify(user.password, input.password)
+    const valid = await argon2.verify(user.password, input.password);
 
     if (!valid) {
       return {
@@ -113,9 +113,9 @@ export default class UserResolver {
             message: 'incorrect password'
           }
         ]
-      }
+      };
     }
 
-    return { user }
+    return { user };
   }
 }
