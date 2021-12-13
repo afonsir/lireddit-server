@@ -1,5 +1,6 @@
-import { Arg, Ctx, Field, InputType, Mutation, ObjectType, Resolver } from 'type-graphql'
 import argon2 from 'argon2'
+
+import { Arg, Ctx, Field, InputType, Mutation, ObjectType, Resolver } from 'type-graphql'
 
 import { MyContext } from '../types'
 import User from '../entities/User'
@@ -33,18 +34,41 @@ class UserResponse {
 
 @Resolver()
 export default class UserResolver {
-  @Mutation(() => User)
+  @Mutation(() => UserResponse)
   async register(
     @Arg('input') input: UsernamePasswordInput,
     @Ctx() { em }: MyContext,
-  ) {
+  ): Promise<UserResponse> {
+    if (input.username.length <= 2) {
+      return {
+        errors: [
+          {
+            field: 'username',
+            message: 'length must be greater than 2'
+          }
+        ]
+      }
+    }
+
+    if (input.password.length <= 3) {
+      return {
+        errors: [
+          {
+            field: 'password',
+            message: 'length must be greater than 3'
+          }
+        ]
+      }
+    }
+
     const hashedPassword = await argon2.hash(input.password)
     const user = em.create(User, {
       username: input.username,
       password: hashedPassword
     })
     await em.persistAndFlush(user)
-    return user
+
+    return { user }
   }
 
   @Mutation(() => UserResponse)
